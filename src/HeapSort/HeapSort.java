@@ -5,90 +5,138 @@ import java.util.Arrays;
 
 public class HeapSort {
 
-    // ----------- Função para "corrigir" o heap ----------
-    void maxHeapify(int[] A, int n, int i) {
-        int left = 2 * i + 1;   // filho esquerdo
-        int right = 2 * i + 2;  // filho direito
-        int largest = i;        // assume que a raiz é o maior
+    // ===========================
+    // MAX-HEAP (ORDENAÇÃO CRESCENTE)
+    // ===========================
 
-        // verifica se filho esquerdo é maior que o pai
+    void maxHeapify(int[] A, int n, int i) {
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+        int largest = i;
+
         if (left < n && A[left] > A[largest]) {
             largest = left;
         }
 
-        // verifica se filho direito é maior que o maior atual
         if (right < n && A[right] > A[largest]) {
             largest = right;
         }
 
-        // se o maior não for a raiz, troca e aplica heapify recursivo
         if (largest != i) {
             int temp = A[i];
             A[i] = A[largest];
             A[largest] = temp;
-
             maxHeapify(A, n, largest);
         }
     }
 
-    // ----------- Função para construir o Heap Máximo ----------
     void buildMaxHeap(int[] A, int n) {
-        // começa do último nó que possui filhos até a raiz
         for (int i = n / 2 - 1; i >= 0; i--) {
             maxHeapify(A, n, i);
         }
     }
 
-    // ----------- Função HeapSort ----------
-    void heapSort(int[] A) {
+    void heapSortAscending(int[] A) {
         int n = A.length;
-
-        // Constrói o heap máximo
         buildMaxHeap(A, n);
 
-        // Extrai elementos do heap um por um
         for (int i = n - 1; i > 0; i--) {
-            // Move a raiz (maior elemento) para o fim
             int temp = A[0];
             A[0] = A[i];
             A[i] = temp;
-
-            // chama maxHeapify na raiz para restaurar o heap
             maxHeapify(A, i, 0);
         }
     }
 
-    // ----------- Função de Validação ----------
-    boolean isSorted(int[] A) {
+    // ===========================
+    // MIN-HEAP (ORDENAÇÃO DECRESCENTE)
+    // ===========================
+
+    void minHeapify(int[] A, int n, int i) {
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+        int smallest = i;
+
+        if (left < n && A[left] < A[smallest]) {
+            smallest = left;
+        }
+
+        if (right < n && A[right] < A[smallest]) {
+            smallest = right;
+        }
+
+        if (smallest != i) {
+            int temp = A[i];
+            A[i] = A[smallest];
+            A[smallest] = temp;
+            minHeapify(A, n, smallest);
+        }
+    }
+
+    void buildMinHeap(int[] A, int n) {
+        for (int i = n / 2 - 1; i >= 0; i--) {
+            minHeapify(A, n, i);
+        }
+    }
+
+    void heapSortDescending(int[] A) {
+        int n = A.length;
+        buildMinHeap(A, n);
+
+        for (int i = n - 1; i > 0; i--) {
+            int temp = A[0];
+            A[0] = A[i];
+            A[i] = temp;
+            minHeapify(A, i, 0);
+        }
+    }
+
+    // ===========================
+    // VALIDAÇÃO
+    // ===========================
+    boolean isSortedAscending(int[] A) {
         for (int i = 1; i < A.length; i++) {
             if (A[i] < A[i - 1]) {
-                return false; // encontrou um fora de ordem
+                return false;
             }
         }
         return true;
     }
 
-    // ----------- Main ----------
+    boolean isSortedDescending(int[] A) {
+        for (int i = 1; i < A.length; i++) {
+            if (A[i] > A[i - 1]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // ===========================
+    // MAIN
+    // ===========================
     public static void main(String[] args) {
         HeapSort sorter = new HeapSort();
         Random random = new Random();
 
-        // Gerar 20 números aleatórios entre 1 e 100
-        int[] array = new int[20];
+        // Gera 10 números aleatórios
+        int[] array = new int[10];
         for (int i = 0; i < array.length; i++) {
             array[i] = random.nextInt(100) + 1;
         }
 
-        // Mostrar vetor original
-        System.out.println("Vetor original: " + Arrays.toString(array));
+        System.out.println("Vetor original:     " + Arrays.toString(array));
 
-        // Executar HeapSort
-        sorter.heapSort(array);
+        // ---------- Max-Heap (Crescente) ----------
+        int[] ascArray = array.clone();
+        sorter.heapSortAscending(ascArray);
+        System.out.println("Max-Heap (Crescente): " + Arrays.toString(ascArray));
+        System.out.println("Está ordenado crescente? " + sorter.isSortedAscending(ascArray));
 
-        // Mostrar resultado ordenado
-        System.out.println("Vetor ordenado: " + Arrays.toString(array));
-
-        // Validação
-        System.out.println("Está ordenado? " + sorter.isSorted(array));
+        // ---------- Min-Heap (Decrescente) ----------
+        int[] descArray = array.clone();
+        sorter.heapSortDescending(descArray);
+        System.out.println("Min-Heap (Decrescente): " + Arrays.toString(descArray));
+        System.out.println("Está ordenado decrescente? " + sorter.isSortedDescending(descArray));
     }
 }
